@@ -1,0 +1,149 @@
+#include <iostream>
+using namespace std;
+
+// Завдання 1
+void task1() {
+    int a = 42;
+    int* p = &a;
+    cout << "[1] Значення через вказівник: " << *p << endl;
+}
+
+// Завдання 2
+void task2() {
+    int arr[5] = { 1, 2, 3, 4, 5 };
+    int* p = arr;
+    cout << "[2] Масив через вказівник: ";
+    for (int i = 0; i < 5; ++i)
+        cout << *(p + i) << " ";
+    cout << endl;
+}
+
+// Завдання 3
+void increment(int* ptr) {
+    (*ptr)++;
+}
+
+// Завдання 4
+void swap(int* a, int* b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+// Завдання 5
+int sum(int* arr, int size) {
+    int* end = arr + size;
+    int s = 0;
+    for (int* p = arr; p < end; ++p)
+        s += *p;
+    return s;
+}
+
+// Завдання 6
+int countEven(int* arr, int size) {
+    int count = 0;
+    for (int* p = arr; p < arr + size; ++p)
+        if (*p % 2 == 0)
+            count++;
+    return count;
+}
+
+// Завдання 7
+int maxElement(int* arr, int size) {
+    int max = *arr;
+    for (int* p = arr + 1; p < arr + size; ++p)
+        if (*p > max)
+            max = *p;
+    return max;
+}
+
+// Завдання 8
+void reverseArray(int* arr, int size) {
+    int* left = arr;
+    int* right = arr + size - 1;
+    while (left < right) {
+        int tmp = *left;
+        *left = *right;
+        *right = tmp;
+        ++left;
+        --right;
+    }
+}
+
+// Завдання 9
+void countSigns(int* arr, int size, int* positive, int* negative, int* zeros) {
+    *positive = *negative = *zeros = 0;
+    for (int* p = arr; p < arr + size; ++p) {
+        if (*p > 0) (*positive)++;
+        else if (*p < 0) (*negative)++;
+        else (*zeros)++;
+    }
+}
+
+// Завдання 10
+void replaceOddsWithZero(int* arr, int size) {
+    for (int* p = arr; p < arr + size; ++p)
+        if (*p % 2 != 0)
+            *p = 0;
+}
+
+// Завдання 11
+void copyEvens(int* source, int* dest, int size) {
+    for (int i = 0; i < size; ++i)
+        *(dest + i) = (*(source + i) % 2 == 0) ? *(source + i) : 0;
+}
+
+// Завдання 12 — Сортування бульбашкою через вказівники
+void bubbleSort(int* arr, int size) {
+    for (int i = 0; i < size - 1; ++i)
+        for (int* p = arr; p < arr + size - i - 1; ++p)
+            if (*p > *(p + 1)) {
+                int tmp = *p;
+                *p = *(p + 1);
+                *(p + 1) = tmp;
+            }
+}
+
+int main() {
+    setlocale(0, "ru");
+    cout << "=== Простi задачi з покажчиками ===\n";
+    task1();
+    task2();
+
+    int x = 5;
+    increment(&x);
+    cout << "[3] Інкремент x: " << x << endl;
+
+    int a = 3, b = 9;
+    swap(&a, &b);
+    cout << "[4] Обмін: a = " << a << ", b = " << b << endl;
+
+    int arr[10] = { 1, 2, 3, 4, 5, -1, 0, -3, 6, 7 };
+    cout << "[5] Сума: " << sum(arr, 10) << endl;
+    cout << "[6] Парних: " << countEven(arr, 10) << endl;
+    cout << "[7] Максимальний: " << maxElement(arr, 10) << endl;
+
+    reverseArray(arr, 10);
+    cout << "[8] Реверс: ";
+    for (int i : arr) cout << i << " "; cout << endl;
+
+    int pos, neg, zer;
+    countSigns(arr, 10, &pos, &neg, &zer);
+    cout << "[9] +: " << pos << ", -: " << neg << ", 0: " << zer << endl;
+
+    replaceOddsWithZero(arr, 10);
+    cout << "[10] Непарні -> 0: ";
+    for (int i : arr) cout << i << " "; cout << endl;
+
+    int copy[10];
+    copyEvens(arr, copy, 10);
+    cout << "[11] Парні скопійовано: ";
+    for (int i : copy) cout << i << " "; cout << endl;
+
+    int unsorted[] = { 5, 2, 8, 1, 9 };
+    bubbleSort(unsorted, 5);
+    cout << "[12] Сортування: ";
+    for (int i : unsorted) cout << i << " "; cout << endl;
+
+    return 0;
+}
