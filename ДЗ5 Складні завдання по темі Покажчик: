@@ -1,0 +1,171 @@
+#include <iostream>
+using namespace std;
+
+// Перевірка на просте число
+bool isPrime(int n) {
+    if (n < 2) return false;
+    for (int i = 2; i * i <= n; ++i)
+        if (n % i == 0) return false;
+    return true;
+}
+
+// 1. Видалення елемента за індексом
+void deleteAtIndex(int*& arr, int& size, int index) {
+    if (index < 0 || index >= size) return;
+    int* newArr = new int[size - 1];
+    for (int i = 0, j = 0; i < size; ++i)
+        if (i != index)
+            newArr[j++] = arr[i];
+    delete[] arr;
+    arr = newArr;
+    size--;
+}
+
+// 2. Всі від’ємні елементи в новий масив
+int* extractNegatives(int* arr, int size, int& newSize) {
+    newSize = 0;
+    for (int i = 0; i < size; ++i)
+        if (arr[i] < 0) newSize++;
+
+    int* neg = new int[newSize];
+    for (int i = 0, j = 0; i < size; ++i)
+        if (arr[i] < 0)
+            neg[j++] = arr[i];
+    return neg;
+}
+
+// 3. Об'єднання A і B
+int* mergeArrays(int* A, int M, int* B, int N, int& sizeC) {
+    sizeC = M + N;
+    int* C = new int[sizeC];
+    for (int i = 0; i < M; ++i) C[i] = A[i];
+    for (int i = 0; i < N; ++i) C[M + i] = B[i];
+    return C;
+}
+
+// 4. Спільні елементи масивів A і B
+int* commonElements(int* A, int M, int* B, int N, int& sizeC) {
+    int* temp = new int[M < N ? M : N];
+    sizeC = 0;
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j) {
+            if (A[i] == B[j]) {
+                bool alreadyExists = false;
+                for (int k = 0; k < sizeC; ++k)
+                    if (temp[k] == A[i]) alreadyExists = true;
+                if (!alreadyExists)
+                    temp[sizeC++] = A[i];
+                break;
+            }
+        }
+    }
+    int* result = new int[sizeC];
+    for (int i = 0; i < sizeC; ++i) result[i] = temp[i];
+    delete[] temp;
+    return result;
+}
+
+// 10. Видалення всіх простих чисел
+int* removePrimes(int* arr, int size, int& newSize) {
+    newSize = 0;
+    for (int i = 0; i < size; ++i)
+        if (!isPrime(arr[i]))
+            newSize++;
+
+    int* newArr = new int[newSize];
+    for (int i = 0, j = 0; i < size; ++i)
+        if (!isPrime(arr[i]))
+            newArr[j++] = arr[i];
+    return newArr;
+}
+
+// 11. Розподіл на додатні, від’ємні та нулі
+void splitBySign(int* arr, int size,
+    int*& pos, int& sizePos,
+    int*& neg, int& sizeNeg,
+    int*& zero, int& sizeZero) {
+    sizePos = sizeNeg = sizeZero = 0;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] > 0) sizePos++;
+        else if (arr[i] < 0) sizeNeg++;
+        else sizeZero++;
+    }
+    pos = new int[sizePos];
+    neg = new int[sizeNeg];
+    zero = new int[sizeZero];
+    int ip = 0, in = 0, iz = 0;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] > 0) pos[ip++] = arr[i];
+        else if (arr[i] < 0) neg[in++] = arr[i];
+        else zero[iz++] = arr[i];
+    }
+}
+
+int main() {
+    setlocale(0, "ru");
+    int a[] = { 3, -1, 0, 7, -4, 5, -6 };
+    int size = sizeof(a) / sizeof(a[0]);
+
+    // 1. Delete by index
+    int* copy1 = new int[size];
+    for (int i = 0; i < size; ++i) copy1[i] = a[i];
+    int size1 = size;
+    deleteAtIndex(copy1, size1, 3);
+    cout << "[1] Після видалення індексу 3: ";
+    for (int i = 0; i < size1; ++i) cout << copy1[i] << " ";
+    cout << endl;
+    delete[] copy1;
+
+    // 2. Від’ємні
+    int newSizeNeg;
+    int* negatives = extractNegatives(a, size, newSizeNeg);
+    cout << "[2] Від’ємні: ";
+    for (int i = 0; i < newSizeNeg; ++i) cout << negatives[i] << " ";
+    cout << endl;
+    delete[] negatives;
+
+    // 3. Об'єднання
+    int b[] = { 8, 9 };
+    int sizeB = sizeof(b) / sizeof(b[0]);
+    int sizeC;
+    int* merged = mergeArrays(a, size, b, sizeB, sizeC);
+    cout << "[3] Об’єднані: ";
+    for (int i = 0; i < sizeC; ++i) cout << merged[i] << " ";
+    cout << endl;
+    delete[] merged;
+
+    // 4. Спільні елементи
+    int c[] = { 3, 5, 10, -1 };
+    int sizeCommon;
+    int* common = commonElements(a, size, c, 4, sizeCommon);
+    cout << "[4] Спільні з {3,5,10,-1}: ";
+    for (int i = 0; i < sizeCommon; ++i) cout << common[i] << " ";
+    cout << endl;
+    delete[] common;
+
+    // 10. Видалити прості
+    int newSizeNoPrime;
+    int* noPrimes = removePrimes(a, size, newSizeNoPrime);
+    cout << "[10] Без простих: ";
+    for (int i = 0; i < newSizeNoPrime; ++i) cout << noPrimes[i] << " ";
+    cout << endl;
+    delete[] noPrimes;
+
+    // 11. Розділити за знаком
+    int* pos, * neg, * zero;
+    int sizePos, sizeNeg, sizeZero;
+    splitBySign(a, size, pos, sizePos, neg, sizeNeg, zero, sizeZero);
+    cout << "[11] Позитивні: ";
+    for (int i = 0; i < sizePos; ++i) cout << pos[i] << " ";
+    cout << "\n     Негативні: ";
+    for (int i = 0; i < sizeNeg; ++i) cout << neg[i] << " ";
+    cout << "\n     Нулі: ";
+    for (int i = 0; i < sizeZero; ++i) cout << zero[i] << " ";
+    cout << endl;
+
+    delete[] pos;
+    delete[] neg;
+    delete[] zero;
+
+    return 0;
+}
